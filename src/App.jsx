@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Search, User, Users, ExternalLink, MapPin, Building, Calendar, Star, GitFork, X, Loader2 } from 'lucide-react';
-
+import {useLocalStorage} from './hooks/useLocalStorage'
+import {useGitHubAPI} from './hooks/useGithubApi'
+import {useInfiniteScroll} from './hooks/useInfiniteScroll'
+import {useDebounce} from './hooks/useDebounce'
 
 const ErrorMessage = React.memo(({ message }) => (
-  <div style={styles.error}>
+  <div >
     {message}
   </div>
 ));
@@ -45,19 +48,16 @@ const UserCard = React.memo(({ user, onClick }) => {
 
   return (
     <div 
-      style={{
-        ...styles.userCard,
-        ...(isHovered ? styles.userCardHover : {})
-      }}
+   
       onClick={() => onClick(user)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div style={styles.userHeader}>
+      <div>
         <img
           src={user.avatar_url}
           alt={user.login}
-          style={styles.avatar}
+        
           onError={(e) => {
             e.target.src = `https://github.com/identicons/${user.login}.png`;
           }}
@@ -95,7 +95,7 @@ const SearchInput = React.memo(({ value, onChange, loading }) => {
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Search GitHub users..."
-          style={styles.searchInput}
+      
           onFocus={(e) => {
             e.target.style.borderColor = '#3B82F6';
             e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
@@ -118,7 +118,7 @@ const SearchInput = React.memo(({ value, onChange, loading }) => {
 });
 
 const App = () => {
-  const [searchQuery, setSearchQuery] = useLocalStorage('github-search-query', '');
+  const [searchQuery, setSearchQuery] = useLocalStorage('search-query', '');
   const [selectedUser, setSelectedUser] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
   const [userDetailsLoading, setUserDetailsLoading] = useState(false);
