@@ -17,7 +17,7 @@ const LoadingSpinner = React.memo(({ text = "Loading..." }) => (
   </div>
 ));
 
-const UserList = React.memo(({ users, onUserClick }) => {
+const UserList = React.memo(({ users}) => {
   const memoizedUsers = useMemo(() => users, [users]);
 
   if (memoizedUsers.length === 0) {
@@ -36,20 +36,17 @@ const UserList = React.memo(({ users, onUserClick }) => {
         <UserCard
           key={`${user.id}-${user.login}`}
           user={user}
-          onClick={onUserClick}
         />
       ))}
     </div>
   );
 });
 
-const UserCard = React.memo(({ user, onClick }) => {
+const UserCard = React.memo(({ user }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
     <div 
-   
-      onClick={() => onClick(user)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -119,9 +116,7 @@ const SearchInput = React.memo(({ value, onChange, loading }) => {
 
 const App = () => {
   const [searchQuery, setSearchQuery] = useLocalStorage('search-query', '');
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [userDetails, setUserDetails] = useState(null);
-  const [userDetailsLoading, setUserDetailsLoading] = useState(false);
+
   const [initialLoaded, setInitialLoaded] = useState(false);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
@@ -141,23 +136,11 @@ const App = () => {
     loading
   );
 
-  const handleUserClick = useCallback(async (user) => {
-    setSelectedUser(user);
-    setUserDetailsLoading(true);
-    setUserDetails(null);
-
-    try {
-      const details = await fetchUserDetails(user.login);
-      setUserDetails(details);
-    } catch (error) {
-      console.error('Failed to fetch user details:', error);
-      setUserDetails(null);
-    } finally {
-      setUserDetailsLoading(false);
-    }
-  }, [fetchUserDetails]);
 
 
+if(loading){
+  return <h1>Loading...</h1>
+}
   return (
     <div >
       <div >
@@ -173,7 +156,7 @@ const App = () => {
           <LoadingSpinner text="Loading popular users..." />
         ) : (
           <>
-            <UserList users={users} onUserClick={handleUserClick} />
+            <UserList users={users} />
             
             {loading && users.length > 0 && (
               <LoadingSpinner text="Loading more users..." />
@@ -187,14 +170,7 @@ const App = () => {
           </>
         )}
 
-        {selectedUser && (
-          <UserModal
-            user={selectedUser}
-            onClose={closeModal}
-            userDetails={userDetails}
-            loading={userDetailsLoading}
-          />
-        )}
+    
       </div>
     </div>
   );

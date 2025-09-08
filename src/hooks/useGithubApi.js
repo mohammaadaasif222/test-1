@@ -13,7 +13,8 @@ export const useGitHubAPI = () => {
     try {
       const url = query.trim() 
         ? `https://api.github.com/search/users?q=${encodeURIComponent(query)}&page=${pageNum}&per_page=30`
-        : `https://api.github.com/search/users?q=followers:>1000&sort=followers&order=desc&page=${pageNum}&per_page=30`;
+        :`https://api.github.com/search/users?q=USERNAME&page=1&per_page=30`
+        // : `https://api.github.com/search/users?q=followers:>1000&sort=followers&order=desc&page=${pageNum}&per_page=30`;
 
       const response = await fetch(url);
 
