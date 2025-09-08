@@ -1,4 +1,5 @@
-const useInfiniteScroll = (callback, hasMore, loading) => {
+import { useState , useEffect} from "react";
+export const useInfiniteScroll = (callback, hasMore, loading) => {
   useEffect(() => {
     const handleScroll = () => {
       if (
